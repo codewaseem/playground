@@ -1,0 +1,19 @@
+{
+  "name": "ts-jest-playground",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "codewaseem@gmail.com",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@types/jest": "^25.2.3",
+    "jest": "^26.0.1",
+    "typescript": "^3.9.3"
+  },
+  "devDependencies": {
+    "ts-jest": "^26.0.0"
+  }
+}
