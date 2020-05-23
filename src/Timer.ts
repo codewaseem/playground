@@ -24,11 +24,10 @@ export default class Timer {
         return this._isRunning;
     }
 
-    private startTicking = () => {
-        this._timerId = setTimeout(() => {
-            this._milliseconds = Date.now() - this._startTime;
-            this.startTicking();
-        }, 100);
+    get lapsTotal() {
+        let total = 0;
+        this.laps.forEach(lap => total += lap.duration);
+        return total;
     }
 
     start() {
@@ -51,4 +50,12 @@ export default class Timer {
             endTime: +new Date(this._startTime + this._milliseconds)
         });
     }
+
+    private startTicking = () => {
+        this._timerId = setTimeout(() => {
+            this._milliseconds = Date.now() - this._startTime;
+            this.startTicking();
+        }, 100);
+    }
+
 }

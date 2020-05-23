@@ -94,7 +94,26 @@ describe("Timer", () => {
         expect(timer.laps.length).toBe(1);
         timer.stop();
         expect(timer.laps.length).toBe(1);
-    })
+    });
+
+    it("can get total time in previous laps", async () => {
+        let delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+        jest.useRealTimers();
+
+        timer.start();
+        await delay(100);
+        timer.stop();
+
+        timer.start();
+        await delay(100);
+        timer.stop();
+
+        timer.start();
+        await delay(100);
+        timer.stop();
+
+        expect(timer.lapsTotal - 300).toBeLessThan(5)
+    });
 
 });
 
