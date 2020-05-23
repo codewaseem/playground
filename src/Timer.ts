@@ -20,28 +20,28 @@ export default class Timer {
         return this._milliseconds;
     }
 
-    set milliseconds(value: number) {
-        this._milliseconds = value;
-    }
-
     get isRunning() {
         return this._isRunning;
     }
 
-    #startTicking = () => {
+    private startTicking = () => {
         this._timerId = setTimeout(() => {
-            this.milliseconds = Date.now() - this._startTime;
-            this.#startTicking();
+            this._milliseconds = Date.now() - this._startTime;
+            this.startTicking();
         }, 100);
     }
 
     start() {
+        if (this.isRunning) return;
+
         this._isRunning = true;
         this._startTime = Date.now();
-        this.#startTicking();
+        this.startTicking();
     }
 
     stop() {
+        if (!this.isRunning) return;
+
         this._isRunning = false;
         clearTimeout(this._timerId);
 

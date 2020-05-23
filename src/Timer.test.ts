@@ -43,7 +43,7 @@ describe("Timer", () => {
         expect(setTimeout).toHaveBeenCalledTimes(1);
         expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 100);
 
-        let callback = jest.spyOn(timer, 'milliseconds', 'set')
+        let callback = jest.spyOn(timer as any, 'startTicking')
 
         // (but not any new timers that get created during that process)
         jest.advanceTimersByTime(100);
@@ -57,7 +57,7 @@ describe("Timer", () => {
         timer.start();
         timer.stop();
 
-        let callback = jest.spyOn(timer, 'milliseconds', 'set');
+        let callback = jest.spyOn(timer as any, 'startTicking');
         jest.advanceTimersByTime(100);
 
         expect(callback).not.toBeCalled();
@@ -78,6 +78,23 @@ describe("Timer", () => {
         }]);
 
     });
+
+
+    it("should return early when starting a already started timer without calling Date.now", () => {
+        let dateNow = jest.spyOn(global.Date, "now");
+        timer.start();
+        expect(dateNow).toHaveBeenCalledTimes(1);
+        timer.start();
+        expect(dateNow).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return early when trying to stop already stopped timer to prevent data pushing to laps", () => {
+        timer.start();
+        timer.stop();
+        expect(timer.laps.length).toBe(1);
+        timer.stop();
+        expect(timer.laps.length).toBe(1);
+    })
 
 });
 
