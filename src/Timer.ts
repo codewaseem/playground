@@ -30,6 +30,10 @@ export default class Timer {
         return total;
     }
 
+    get totalTime() {
+        return this.lapsTotal + this._milliseconds;
+    }
+
     start() {
         if (this.isRunning) return;
 
@@ -49,6 +53,8 @@ export default class Timer {
             startTime: this._startTime,
             endTime: +new Date(this._startTime + this._milliseconds)
         });
+
+        this._milliseconds = 0;
     }
 
     private startTicking = () => {

@@ -1,5 +1,8 @@
 import Timer from "./Timer";
 
+let delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+
 describe("Timer", () => {
 
     let timer: Timer;
@@ -53,7 +56,7 @@ describe("Timer", () => {
         expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 100);
     });
 
-    it("stopping the timer should clear the pending timer", () => {
+    it("stopping the timer should clear the pending timer ", () => {
         timer.start();
         timer.stop();
 
@@ -62,6 +65,7 @@ describe("Timer", () => {
 
         expect(callback).not.toBeCalled();
         expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 100);
+
 
     });
 
@@ -96,8 +100,7 @@ describe("Timer", () => {
         expect(timer.laps.length).toBe(1);
     });
 
-    it("can get total time in previous laps", async () => {
-        let delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+    it("can get total time in previous laps and milliseconds should be zero at the end", async () => {
         jest.useRealTimers();
 
         timer.start();
@@ -112,7 +115,25 @@ describe("Timer", () => {
         await delay(100);
         timer.stop();
 
-        expect(timer.lapsTotal - 300).toBeLessThan(5)
+        expect(timer.lapsTotal).toBeGreaterThan(295);
+        expect(timer.milliseconds).toBe(0);
+    });
+
+    it("can get total time (running+lapsTotal)", async () => {
+        jest.useRealTimers();
+        timer.start();
+        await delay(100);
+        timer.stop();
+
+        timer.start();
+
+        await delay(100);
+        expect(timer.totalTime).toBeGreaterThanOrEqual(195);
+
+        await delay(100);
+        expect(timer.totalTime).toBeGreaterThanOrEqual(295);
+
+        timer.stop();
     });
 
 });
