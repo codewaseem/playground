@@ -4,11 +4,9 @@ export const BASE_URL = "https://api.dev.aptask.com";
 export const PULSE_AUTH_URL = "/api/v1/users/pulse-two/login";
 
 export const LOGIN_URL = BASE_URL + PULSE_AUTH_URL;
-export const LOGIN_ERROR = "LOGIN_ERROR";
 
 export const MONITOR_API_URL = `${BASE_URL}/api/v1/apps/monitor`;
 export const ADD_LEAVE_URL = `${MONITOR_API_URL}/leaves`;
-export const CAN_APPLY_LEAVE_URL = `${MONITOR_API_URL}/can-apply-leave`;
 export const ADD_TIME_LOG = `${MONITOR_API_URL}/logs`
 
 
