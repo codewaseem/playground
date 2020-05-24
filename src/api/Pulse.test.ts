@@ -1,30 +1,57 @@
 jest.mock("axios");
 
-import axios from "axios";
-import PulseApi, { LOGIN_URL } from "./Pulse";
+import axios, { AxiosRequestConfig } from "axios";
+import PulseApi, { LOGIN_URL, LOGIN_ERROR } from "./Pulse";
+
+const VALID_DATA = {
+    userName: "taj@aptask.com",
+    password: "Aptask123"
+};
+
+
+(axios as jest.Mocked<any>).mockImplementation(({ url, data, method }: AxiosRequestConfig) => {
+    if (url == LOGIN_URL && method == "POST") {
+        if (data.userName == VALID_DATA.userName && data.password == VALID_DATA.password) {
+            return Promise.resolve({
+                data: {
+                    data: {
+                        email: data.userName
+                    }
+                }
+            });
+        } else {
+            return Promise.reject();
+        }
+    }
+});
 
 
 describe("PulseApi", () => {
 
     let pulseApi = PulseApi.getInstance();
 
-    it("it should have a login method", () => {
-        expect(pulseApi.login).toBeInstanceOf(Function);
-    });
 
-    it("should call fetch with given username and password", async () => {
+    it("Login: should resolve given correct username and password", async () => {
 
-        (axios as jest.MockedFunction<any>).mockReturnValue(Promise.resolve({ data: { data: { email: "taj@aptask.com" } } }))
-        let userData = await pulseApi.login("taj@aptask.com", "Aptask123");
+        let userData = await pulseApi.login(VALID_DATA.userName, VALID_DATA.password);
         expect(axios).toHaveBeenCalledWith({
             url: LOGIN_URL,
             method: 'POST',
             data: {
-                userName: "taj@aptask.com",
-                password: "Aptask123"
+                userName: VALID_DATA.userName,
+                password: VALID_DATA.password
             }
-        })
-        expect(userData.email).toBe("taj@aptask.com");
-
+        });
+        expect(userData.email).toBe(VALID_DATA.userName);
     });
+
+    it("Login: invalid data should reject", async () => {
+        try {
+            await pulseApi.login("badusername", "password")
+        } catch (e) {
+            expect(e).toMatchObject({
+                message: LOGIN_ERROR
+            })
+        }
+    })
 });

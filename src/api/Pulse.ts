@@ -3,6 +3,7 @@ import axios from "axios";
 export const BASE_PULSE_URL = "https://api.dev.aptask.com";
 export const PULSE_AUTH_URL = "/api/v1/users/pulse-two/login";
 export const LOGIN_URL = BASE_PULSE_URL + PULSE_AUTH_URL;
+export const LOGIN_ERROR = "LOGIN_ERROR";
 
 export default class PulseApi {
 
@@ -27,6 +28,11 @@ export default class PulseApi {
                 userName,
                 password
             }
-        }).then(r => r.data.data)
+        }).then(r => r.data.data).catch((error) => ({
+            error,
+            message: LOGIN_ERROR
+        }))
     }
+
+
 }
