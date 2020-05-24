@@ -1,7 +1,7 @@
 jest.mock("axios");
 
 import axios, { AxiosRequestConfig } from "axios";
-import PulseApi, { LOGIN_URL, LOGIN_ERROR } from "./Pulse";
+import PulseApi, { LOGIN_URL, LOGIN_ERROR, ADD_LEAVE_URL } from "./Pulse";
 
 const VALID_DATA = {
     userName: "taj@aptask.com",
@@ -48,4 +48,34 @@ describe("PulseApi", () => {
     it("Login: invalid data should reject", async () => {
         expect(pulseApi.login("badusername", "password")).rejects.toMatchSnapshot()
     });
+
+    it("Add Leave: should be able to add leave", async () => {
+        let token = "token";
+        let userId = `1`;
+        let reason = "sick";
+        let startTime = "start-time";
+        let endTime = "end-time"
+
+        await pulseApi.addLeave(token, userId, {
+            reason,
+            startTime,
+            endTime
+        });
+
+        expect(axios).toHaveBeenLastCalledWith({
+            url: ADD_LEAVE_URL,
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: `application/json, text/plain, */*`,
+                "Content-Type": `application/json;charset=utf-8`
+            },
+            data: {
+                userId,
+                reason,
+                startTime,
+                endTime
+            }
+        } as AxiosRequestConfig)
+    })
 });
