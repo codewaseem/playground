@@ -56,8 +56,6 @@ describe("PulseApi", () => {
         logType: "WORK",
     };
 
-
-
     it("Login: should resolve given correct username and password", async () => {
 
         let userData = await pulseApi.login(VALID_DATA.userName, VALID_DATA.password);
@@ -69,6 +67,7 @@ describe("PulseApi", () => {
                 password: VALID_DATA.password
             }
         });
+
         expect(userData.email).toBe(VALID_DATA.userName);
     });
 
@@ -77,7 +76,6 @@ describe("PulseApi", () => {
     });
 
     it("should be able to set auth token and userId to the pulseApi instance", () => {
-
 
         pulseApi.setAuthInfo({
             token,
@@ -91,7 +89,6 @@ describe("PulseApi", () => {
     })
 
     it("Add Leave: should be able to add leave", async () => {
-
 
         await pulseApi.addLeave(leaveData);
 
@@ -109,7 +106,6 @@ describe("PulseApi", () => {
 
     it("Add Time Logs: should be able to add time logs", async () => {
 
-
         await pulseApi.addTime([timeData]);
 
         expect(axios).toHaveBeenLastCalledWith({
@@ -126,7 +122,6 @@ describe("PulseApi", () => {
     it("Add Manual TimeLog: should be able to add manual time log", async () => {
 
         let manual = true;
-
 
         await pulseApi.addTime([{
             ...timeData,
@@ -153,6 +148,5 @@ describe("PulseApi", () => {
     it("calling add time without setting authInfo should", () => {
         pulseApi.setAuthInfo({} as any);
         expect(pulseApi.addTime([timeData])).rejects.toMatchSnapshot();
-
     });
 });
