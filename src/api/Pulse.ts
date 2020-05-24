@@ -28,10 +28,7 @@ export default class PulseApi {
                 userName,
                 password
             }
-        }).then(r => r.data.data).catch((error) => ({
-            error,
-            message: LOGIN_ERROR
-        }))
+        }).then(r => r.data.data)
     }
 
 

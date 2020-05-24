@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PulseApi Login: invalid data should reject 1`] = `undefined`;

@@ -46,12 +46,6 @@ describe("PulseApi", () => {
     });
 
     it("Login: invalid data should reject", async () => {
-        try {
-            await pulseApi.login("badusername", "password")
-        } catch (e) {
-            expect(e).toMatchObject({
-                message: LOGIN_ERROR
-            })
-        }
-    })
+        expect(pulseApi.login("badusername", "password")).rejects.toMatchSnapshot()
+    });
 });
