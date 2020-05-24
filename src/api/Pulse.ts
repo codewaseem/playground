@@ -29,21 +29,9 @@ export interface TimeLog {
     manual?: boolean
 }
 
-export default class PulseApi {
+class PulseApi {
 
-    private static instance: PulseApi | null = null;
     private authInfo!: AuthUserInfo;
-
-    private constructor() {
-
-    }
-
-    static getInstance() {
-        if (!this.instance) {
-            this.instance = new PulseApi();
-        }
-        return this.instance;
-    }
 
     private getAuthHeaders() {
         return {
@@ -103,3 +91,5 @@ export default class PulseApi {
     }
 
 }
+
+export default new PulseApi();

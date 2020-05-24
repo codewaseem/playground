@@ -1,7 +1,7 @@
 jest.mock("axios");
 
 import axios, { AxiosRequestConfig } from "axios";
-import PulseApi, { LOGIN_URL, ADD_LEAVE_URL, ADD_TIME_LOG, TimeLog } from "./Pulse";
+import pulseApi, { LOGIN_URL, ADD_LEAVE_URL, ADD_TIME_LOG, TimeLog } from "./Pulse";
 
 const VALID_DATA = {
     userName: "taj@aptask.com",
@@ -28,11 +28,6 @@ const VALID_DATA = {
 
 describe("PulseApi", () => {
 
-    let pulseApi: PulseApi;
-
-    beforeEach(() => {
-        pulseApi = PulseApi.getInstance();
-    });
 
     let token = `token`;
     let userId = `1`;
