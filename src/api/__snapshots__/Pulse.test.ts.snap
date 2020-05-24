@@ -1,3 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PulseApi Login: invalid data should reject 1`] = `undefined`;
+
+exports[`PulseApi calling add leave without setting authInfo should reject 1`] = `undefined`;
+
+exports[`PulseApi calling add time without setting authInfo should 1`] = `undefined`;

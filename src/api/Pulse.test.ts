@@ -1,7 +1,7 @@
 jest.mock("axios");
 
 import axios, { AxiosRequestConfig } from "axios";
-import PulseApi, { LOGIN_URL, LOGIN_ERROR, ADD_LEAVE_URL, CAN_APPLY_LEAVE_URL, ADD_TIME_LOG } from "./Pulse";
+import PulseApi, { LOGIN_URL, LOGIN_ERROR, ADD_LEAVE_URL, CAN_APPLY_LEAVE_URL, ADD_TIME_LOG, TimeLog } from "./Pulse";
 
 const VALID_DATA = {
     userName: "taj@aptask.com",
@@ -37,6 +37,27 @@ describe("PulseApi", () => {
     let token = `token`;
     let userId = `1`;
 
+    let authHeaders = {
+        Authorization: `Bearer ${token}`,
+        Accept: `application/json, text/plain, */*`,
+        "Content-Type": `application/json;charset=utf-8`
+    };
+
+    let leaveData = {
+        reason: "sick",
+        startTime: "start-time",
+        endTime: "end-time"
+    }
+
+    let timeData: TimeLog = {
+        startTime: 17777770000,
+        endTime: 17777773600,
+        duration: 3600,
+        logType: "WORK",
+    };
+
+
+
     it("Login: should resolve given correct username and password", async () => {
 
         let userData = await pulseApi.login(VALID_DATA.userName, VALID_DATA.password);
@@ -71,62 +92,67 @@ describe("PulseApi", () => {
 
     it("Add Leave: should be able to add leave", async () => {
 
-        let reason = "sick";
-        let startTime = "start-time";
-        let endTime = "end-time"
 
-        await pulseApi.addLeave({
-            reason,
-            startTime,
-            endTime
-        });
+        await pulseApi.addLeave(leaveData);
 
         expect(axios).toHaveBeenLastCalledWith({
             url: ADD_LEAVE_URL,
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: `application/json, text/plain, */*`,
-                "Content-Type": `application/json;charset=utf-8`
-            },
+            headers: authHeaders,
             data: {
                 userId,
-                reason,
-                startTime,
-                endTime
+                ...leaveData
             }
         } as AxiosRequestConfig)
     });
 
 
     it("Add Time Logs: should be able to add time logs", async () => {
-        let startTime = 17777770000;
-        let endTime = 17777773600;
-        let duration = 3600;
+
+
+        await pulseApi.addTime([timeData]);
+
+        expect(axios).toHaveBeenLastCalledWith({
+            url: ADD_TIME_LOG,
+            method: "POST",
+            headers: authHeaders,
+            data: [{
+                ...timeData,
+                userId,
+            }]
+        } as AxiosRequestConfig)
+    });
+
+    it("Add Manual TimeLog: should be able to add manual time log", async () => {
+
+        let manual = true;
+
 
         await pulseApi.addTime([{
-            startTime,
-            endTime,
-            duration,
-            logType: "WORK"
+            ...timeData,
+            manual
         }]);
 
         expect(axios).toHaveBeenLastCalledWith({
             url: ADD_TIME_LOG,
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: `application/json, text/plain, */*`,
-                "Content-Type": `application/json;charset=utf-8`
-            },
+            headers: authHeaders,
             data: [{
-                startTime,
-                endTime,
-                duration,
+                ...timeData,
+                manual,
                 userId,
-                logType: "WORK"
             }]
         } as AxiosRequestConfig)
     });
 
+    it("calling add leave without setting authInfo should reject", async () => {
+        pulseApi.setAuthInfo({} as any);
+        expect(pulseApi.addLeave(leaveData)).rejects.toMatchSnapshot();
+    });
+
+    it("calling add time without setting authInfo should", () => {
+        pulseApi.setAuthInfo({} as any);
+        expect(pulseApi.addTime([timeData])).rejects.toMatchSnapshot();
+
+    });
 });

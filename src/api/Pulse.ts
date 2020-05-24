@@ -28,6 +28,7 @@ export interface TimeLog {
     startTime: number,
     endTime: number,
     duration: number,
+    manual?: boolean
 }
 
 export default class PulseApi {
@@ -44,6 +45,18 @@ export default class PulseApi {
             this.instance = new PulseApi();
         }
         return this.instance;
+    }
+
+    private getAuthHeaders() {
+        return {
+            Authorization: `Bearer ${this.authInfo.token}`,
+            Accept: `application/json, text/plain, */*`,
+            "Content-Type": `application/json;charset=utf-8`
+        }
+    }
+
+    private isAuthInfoSet() {
+        return this.authInfo.userId && this.authInfo.token;
     }
 
     setAuthInfo(info: AuthUserInfo) {
@@ -66,30 +79,27 @@ export default class PulseApi {
     }
 
     addLeave(leave: Leave) {
+
+        if (!this.isAuthInfoSet()) return Promise.reject();
+
         return axios({
             url: ADD_LEAVE_URL,
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${this.authInfo.token}`,
-                Accept: `application/json, text/plain, */*`,
-                "Content-Type": `application/json;charset=utf-8`
-            },
+            headers: this.getAuthHeaders(),
             data: { userId: this.authInfo.userId, ...leave }
         })
     }
 
     addTime(timeLogs: TimeLog[]) {
 
+        if (!this.isAuthInfoSet()) return Promise.reject();
+
         timeLogs.forEach(log => (log as TimeLog & { userId: string }).userId = this.authInfo.userId);
 
         return axios({
             url: ADD_TIME_LOG,
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${this.authInfo.token}`,
-                Accept: `application/json, text/plain, */*`,
-                "Content-Type": `application/json;charset=utf-8`
-            },
+            headers: this.getAuthHeaders(),
             data: timeLogs
         });
     }
