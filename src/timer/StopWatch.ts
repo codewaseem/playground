@@ -12,8 +12,28 @@ export default class Timer {
     private _startTime = 0;
     private _laps: Lap[] = [];
 
+    constructor(initialState?: {
+        isRunning?: boolean,
+        laps?: Lap[],
+        milliseconds?: number,
+        startTime?: number,
+    }) {
+        if (initialState) {
+            this._laps = initialState.laps || [];
+            this._isRunning = initialState.isRunning || false;
+            this._milliseconds = initialState.milliseconds || 0;
+
+            if (this._isRunning) {
+                this._startTime = initialState.startTime || (Date.now() - this._milliseconds);
+                this.stop();
+                this.start();
+            }
+        }
+    }
+
     get laps() {
-        return this._laps;
+        // return a copy
+        return this._laps.slice();
     }
 
     get milliseconds() {
@@ -30,7 +50,7 @@ export default class Timer {
 
     get lapsTotal() {
         let total = 0;
-        this.laps.forEach(lap => total += lap.duration);
+        this._laps.forEach(lap => total += lap.duration);
         return total;
     }
 
@@ -39,7 +59,7 @@ export default class Timer {
     }
 
     start() {
-        if (this.isRunning) return;
+        if (this._isRunning) return;
 
         this._isRunning = true;
         this._startTime = Date.now();
@@ -52,12 +72,20 @@ export default class Timer {
         this._isRunning = false;
         clearTimeout(this._timerId);
 
-        this.laps.push({
+        this._laps.push({
             duration: this._milliseconds,
             startTime: this._startTime,
             endTime: +new Date(this._startTime + this._milliseconds)
         });
 
+        this._milliseconds = 0;
+    }
+
+    reset() {
+        if (this._timerId) clearTimeout(this._timerId);
+
+        this._isRunning = false;
+        this._laps = [];
         this._milliseconds = 0;
     }
 
