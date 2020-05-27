@@ -5,7 +5,7 @@ interface Lap {
 }
 
 
-export default class Timer {
+export default class StopWatch {
     private _isRunning = false;
     private _milliseconds = 0;
     private _timerId!: NodeJS.Timeout;
@@ -16,7 +16,6 @@ export default class Timer {
         isRunning?: boolean,
         laps?: Lap[],
         milliseconds?: number,
-        startTime?: number,
     }) {
         if (initialState) {
             this._laps = initialState.laps || [];
@@ -24,7 +23,7 @@ export default class Timer {
             this._milliseconds = initialState.milliseconds || 0;
 
             if (this._isRunning) {
-                this._startTime = initialState.startTime || (Date.now() - this._milliseconds);
+                this._startTime = (Date.now() - this._milliseconds);
                 this.stop();
                 this.start();
             }
@@ -96,4 +95,15 @@ export default class Timer {
         }, 100);
     }
 
+    toJSON() {
+        return {
+            milliseconds: this._milliseconds,
+            laps: this._laps,
+            isRunning: this.isRunning
+        }
+    }
+
+    toObject() {
+        return this.toJSON();
+    }
 }

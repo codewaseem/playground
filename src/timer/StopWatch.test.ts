@@ -259,5 +259,19 @@ describe("StopWatch", () => {
         expect(stopWatch3.lapsTotal).toBe(200);
 
     });
+
+    it("toJSON, toObject  should return the an object containing isRunning, milliseconds, and laps", () => {
+        const struct = {
+            isRunning: expect.any(Boolean),
+            milliseconds: expect.any(Number),
+            laps: expect.any(Array)
+        };
+
+        expect(stopWatch.toJSON()).toMatchObject(struct);
+
+        expect(stopWatch.toObject()).toMatchObject(struct);
+
+        expect(JSON.stringify(stopWatch)).toMatch(`{"milliseconds":0,"laps":[],"isRunning":false}`);
+    });
 });
 
