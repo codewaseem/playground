@@ -24,6 +24,10 @@ export default class Timer {
         return this._isRunning;
     }
 
+    get totalLaps() {
+        return this._laps.length;
+    }
+
     get lapsTotal() {
         let total = 0;
         this.laps.forEach(lap => total += lap.duration);

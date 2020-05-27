@@ -100,7 +100,7 @@ describe("Timer", () => {
         expect(timer.laps.length).toBe(1);
     });
 
-    it("can get total time in previous laps and milliseconds should be zero at the end", async () => {
+    it("can get total time in previous laps", async () => {
         jest.useRealTimers();
 
         timer.start();
@@ -119,6 +119,17 @@ describe("Timer", () => {
         expect(timer.milliseconds).toBe(0);
     });
 
+    it("it should set milliseconds back to zero after stopping", async () => {
+        jest.useRealTimers();
+        timer.start();
+        await delay(100);
+        expect(timer.milliseconds).toBeGreaterThan(95);
+
+        timer.stop();
+        expect(timer.milliseconds).toBe(0);
+
+    })
+
     it("can get total time (running+lapsTotal)", async () => {
         jest.useRealTimers();
         timer.start();
@@ -136,5 +147,17 @@ describe("Timer", () => {
         timer.stop();
     });
 
+    it("should get total laps count", () => {
+        expect(timer.totalLaps).toBe(0);
+        timer.start();
+        timer.stop();
+        expect(timer.totalLaps).toBe(1);
+        timer.start();
+        timer.stop();
+        timer.start();
+        timer.stop();
+        expect(timer.totalLaps).toBe(3);
+
+    })
 });
 
