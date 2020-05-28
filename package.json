@@ -6,15 +6,18 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "run-script": "node -r ts-node/register ",
     "test": "jest"
   },
   "dependencies": {
+    "active-win": "^6.1.0",
     "axios": "^0.19.2"
   },
   "devDependencies": {
-    "ts-jest": "^26.0.0",
-    "jest": "^26.0.1",
     "@types/jest": "^25.2.3",
+    "jest": "^26.0.1",
+    "ts-jest": "^26.0.0",
+    "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
   }
 }
