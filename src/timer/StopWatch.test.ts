@@ -1,7 +1,6 @@
 import StopWatch from "./StopWatch";
 
-let delay = (ms: number) => new Promise(r => setTimeout(r, ms));
-
+import { delay } from "../utils/index";
 
 describe("StopWatch", () => {
 
