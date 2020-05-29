@@ -1,21 +1,9 @@
 import activeWin from "active-win";
 
-export interface ActivityLog {
-    id: string,
-    appName: string,
-    appTitle: string,
-    timeSpent: number,
-    processId: number,
-}
-
 export interface TrackerLogData {
     [key: string]: {
         [key: string]: number
     }
-}
-
-export interface TrackerLogStorage {
-    save(data: ActivityLog): Promise<ActivityLog>
 }
 
 export default class Tracker {
@@ -24,12 +12,7 @@ export default class Tracker {
 
     private _timerId!: NodeJS.Timeout;
     private _isTracking: boolean = false;
-    private _trackerLogStorage: TrackerLogStorage;
     private _trackingData: TrackerLogData = {};
-
-    constructor(trackerLogStorage: TrackerLogStorage) {
-        this._trackerLogStorage = trackerLogStorage;
-    }
 
     private set timerId(id: NodeJS.Timeout) {
         this._timerId = id;
@@ -54,6 +37,7 @@ export default class Tracker {
                 this._trackingData[appName][windowTitle] = 0;
             }
             this._trackingData[appName][windowTitle]++;
+
         }
     }
 
@@ -67,8 +51,6 @@ export default class Tracker {
         this._isTracking = true;
         this._startTracking();
     }
-
-
 
     stop() {
         if (!this._isTracking) return;

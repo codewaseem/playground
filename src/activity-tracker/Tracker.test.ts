@@ -1,42 +1,25 @@
 import activeWin from "active-win";
 import Tracker from ".";
-import LogStorage from "./LogStorage";
 import { delay } from "../utils";
 import { LogInputData, LogOutputData } from "./test.data";
 
-jest.mock("active-win");
-jest.mock("./LogStorage");
-
-
-
-
-
-
-// using var, as the mockFunction is hoisted.
-var index = -1;
-
-(activeWin as jest.MockedFunction<typeof activeWin>).mockImplementation(() => {
-    return new Promise((res) => res(LogInputData[index++]));
-});
-
-jest.useFakeTimers();
 Tracker.DEFAULT_TIME_INTERVAL = 10;
 
 
 describe("Tracker", () => {
 
     let tracker: Tracker;
-    let logStorage: LogStorage;
 
     beforeEach(() => {
-        logStorage = new LogStorage();
-        tracker = new Tracker(logStorage);
+        tracker = new Tracker();
+        jest.useFakeTimers();
+
     });
 
     afterEach(() => {
         jest.clearAllMocks();
         jest.clearAllTimers();
-    })
+    });
 
     it("should be defined", () => {
         expect(tracker).toBeDefined();
