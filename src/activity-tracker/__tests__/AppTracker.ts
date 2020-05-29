@@ -11,10 +11,13 @@ describe("AppTracker", () => {
     let tracker: AppTracker;
     let logger: AppDataLogger;
 
-    const save = jest.fn();
-    const getLogs = jest.fn();
+    let testLogs: AppDataLog[] = [];
+
+    const save = jest.fn((data) => testLogs.push(data)) as any;
+    const getLogs = jest.fn(() => testLogs) as any;
 
     beforeEach(() => {
+        testLogs = [];
         logger = {
             save,
             getLogs
@@ -105,7 +108,25 @@ describe("AppTracker", () => {
             id: '/Applications/Google Chrome.app',
             timeSpent: AppTracker.DEFAULT_TIME_INTERVAL,
         } as AppDataLog);
+
+        tracker.stop();
     });
 
+    it("should be able to read saved log", async () => {
 
+        jest.useRealTimers();
+        tracker.start();
+
+        await delay(AppTracker.DEFAULT_TIME_INTERVAL);
+
+
+        expect(await logger.getLogs()).toMatchObject([{
+            windowTitle: 'Unicorns - Google Search',
+            appName: 'Google Chrome',
+            id: '/Applications/Google Chrome.app',
+            timeSpent: AppTracker.DEFAULT_TIME_INTERVAL,
+        }]);
+
+        tracker.stop();
+    });
 });
