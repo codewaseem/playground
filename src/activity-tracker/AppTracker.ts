@@ -6,13 +6,32 @@ export interface TrackerLogData {
     }
 }
 
-export default class Tracker {
+type Milliseconds = number;
+
+export interface AppDataLog {
+    appName: string,
+    windowTitle: string,
+    timeSpent: Milliseconds,
+    id: string,
+}
+
+export interface AppDataLogger {
+    save(data: AppDataLog): Promise<AppDataLog>;
+    getLogs(): Promise<AppDataLog[]>
+}
+
+export default class AppTracker {
 
     static DEFAULT_TIME_INTERVAL = 5000;
 
     private _timerId!: NodeJS.Timeout;
     private _isTracking: boolean = false;
     private _trackingData: TrackerLogData = {};
+    private _logger: AppDataLogger;
+
+    constructor(logger: AppDataLogger) {
+        this._logger = logger;
+    }
 
     private set timerId(id: NodeJS.Timeout) {
         this._timerId = id;
@@ -22,7 +41,7 @@ export default class Tracker {
         this.timerId = setTimeout(() => {
             this._startTracking();
             this.saveActiveWindowData();
-        }, Tracker.DEFAULT_TIME_INTERVAL);
+        }, AppTracker.DEFAULT_TIME_INTERVAL);
     }
 
     private async saveActiveWindowData() {
@@ -38,6 +57,12 @@ export default class Tracker {
             }
             this._trackingData[appName][windowTitle]++;
 
+            this._logger.save({
+                appName,
+                windowTitle,
+                timeSpent: this._trackingData[appName][windowTitle] * AppTracker.DEFAULT_TIME_INTERVAL,
+                id: data.owner.path
+            });
         }
     }
 

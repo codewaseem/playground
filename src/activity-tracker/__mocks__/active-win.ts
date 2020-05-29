@@ -1,7 +1,9 @@
-import { LogInputData } from "../test.data";
+import { LogInputData } from "../__testdata__/test.data";
 
 var index = -1;
 
 export default jest.fn().mockImplementation(() => {
-    return new Promise((res) => res(LogInputData[index++]));
+    let data = LogInputData[index++] || LogInputData[0];
+
+    return new Promise((res) => res(data));
 });

@@ -1,17 +1,26 @@
 import activeWin from "active-win";
-import Tracker from ".";
-import { delay } from "../utils";
-import { LogInputData, LogOutputData } from "./test.data";
+import AppTracker, { AppDataLogger, AppDataLog } from "../AppTracker";
+import { delay } from "../../utils";
+import { LogInputData, LogOutputData } from "../__testdata__/test.data";
 
-Tracker.DEFAULT_TIME_INTERVAL = 10;
+AppTracker.DEFAULT_TIME_INTERVAL = 10;
 
 
-describe("Tracker", () => {
+describe("AppTracker", () => {
 
-    let tracker: Tracker;
+    let tracker: AppTracker;
+    let logger: AppDataLogger;
+
+    const save = jest.fn();
+    const getLogs = jest.fn();
 
     beforeEach(() => {
-        tracker = new Tracker();
+        logger = {
+            save,
+            getLogs
+        }
+
+        tracker = new AppTracker(logger);
         jest.useFakeTimers();
 
     });
@@ -21,15 +30,6 @@ describe("Tracker", () => {
         jest.clearAllTimers();
     });
 
-    it("should be defined", () => {
-        expect(tracker).toBeDefined();
-    });
-
-    it("it should have start and stop method", () => {
-        expect(tracker.start).toBeInstanceOf(Function);
-        expect(tracker.stop).toBeInstanceOf(Function);
-    });
-
     it("calling start should setup the timer-interval", () => {
 
         const timerIdSet = jest.spyOn(tracker as any, "timerId", "set");
@@ -37,7 +37,7 @@ describe("Tracker", () => {
         tracker.start();
 
         expect(timerIdSet).toHaveBeenCalled();
-        expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), Tracker.DEFAULT_TIME_INTERVAL);
+        expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), AppTracker.DEFAULT_TIME_INTERVAL);
 
     });
 
@@ -85,10 +85,27 @@ describe("Tracker", () => {
 
         tracker.start();
 
-        await delay(Tracker.DEFAULT_TIME_INTERVAL * (LogInputData.length + 1));
+        await delay(AppTracker.DEFAULT_TIME_INTERVAL * (LogInputData.length + 1));
 
         expect(tracker.getLogData()).toMatchObject(LogOutputData);
 
         tracker.stop();
     });
+
+    it("should be able to log the data", async () => {
+
+        jest.useRealTimers();
+        tracker.start();
+
+        await delay(AppTracker.DEFAULT_TIME_INTERVAL);
+
+        expect(save).toHaveBeenCalledWith({
+            windowTitle: 'Unicorns - Google Search',
+            appName: 'Google Chrome',
+            id: '/Applications/Google Chrome.app',
+            timeSpent: AppTracker.DEFAULT_TIME_INTERVAL,
+        } as AppDataLog);
+    });
+
+
 });

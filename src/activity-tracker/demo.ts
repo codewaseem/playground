@@ -1,12 +1,15 @@
-import Tracker from "./index";
-import LogStorage from "./LogStorage";
+import AppTracker from "./AppTracker";
 
 (async () => {
-    const tracker = new Tracker(new LogStorage());
+    const tracker = new AppTracker({
+        save: (data): any => { },
+        getLogs: (): any => { }
+
+    });
     tracker.start();
 
     setInterval(() => {
         console.log(tracker.getLogData());
-    }, Tracker.DEFAULT_TIME_INTERVAL);
+    }, AppTracker.DEFAULT_TIME_INTERVAL);
 
 })();
