@@ -1,8 +1,13 @@
 import activeWin from "active-win";
+import AppTracker, { AppsUsageLogs } from "../AppTracker";
 
 const APP_ONE = 'Google Chrome';
 const APP_TWO = "VS Code";
 const APP_THREE = "AiMonitor";
+
+export const TestIntervalTime = 10;
+
+AppTracker.TIMER_INTERVAL = TestIntervalTime;
 
 const appOneTabOne: activeWin.WindowsResult = {
     platform: "windows",
@@ -52,16 +57,26 @@ const appThreeTabOne: activeWin.WindowsResult = {
 export const LogInputData = [appOneTabOne, appOneTabTwo, appOneTabTwo, appOneTabTwo,
     appOneTabThree, appTwoTabOne, appThreeTabOne];
 
-export const LogOutputData = {
-    [APP_ONE]: {
-        [appOneTabOne.title]: 1,
-        [appOneTabTwo.title]: 3,
-        [appOneTabThree.title]: 1
+export const LogOutputData: AppsUsageLogs = {
+    [APP_ONE as string]: {
+        [appOneTabOne.title]: {
+            timeSpent: AppTracker.TIMER_INTERVAL
+        },
+        [appOneTabTwo.title]: {
+            timeSpent: 3 * AppTracker.TIMER_INTERVAL
+        },
+        [appOneTabThree.title]: {
+            timeSpent: AppTracker.TIMER_INTERVAL
+        }
     },
-    [APP_TWO]: {
-        [appOneTabOne.title]: 1
+    [APP_TWO as string]: {
+        [appOneTabOne.title]: {
+            timeSpent: AppTracker.TIMER_INTERVAL
+        }
     },
-    [APP_THREE]: {
-        [appOneTabOne.title]: 1
+    [APP_THREE as string]: {
+        [appOneTabOne.title]: {
+            timeSpent: AppTracker.TIMER_INTERVAL
+        }
     }
 }

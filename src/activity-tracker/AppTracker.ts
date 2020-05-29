@@ -1,35 +1,30 @@
 import activeWin from "active-win";
 
-export interface TrackerLogData {
+type Milliseconds = number;
+
+export interface AppsUsageLogs {
     [key: string]: {
-        [key: string]: number
+        [key: string]: {
+            timeSpent: Milliseconds,
+        }
     }
 }
 
-type Milliseconds = number;
-
-export interface AppDataLog {
-    appName: string,
-    windowTitle: string,
-    timeSpent: Milliseconds,
-    id: string,
-}
-
-export interface AppDataLogger {
-    save(data: AppDataLog): Promise<AppDataLog>;
-    getLogs(): Promise<AppDataLog[]>
+export interface AppsUsageLogger {
+    saveAppUsageLogs(data: AppsUsageLogs): Promise<AppsUsageLogs>;
+    getAppUsageLogs(): Promise<AppsUsageLogs>;
 }
 
 export default class AppTracker {
 
-    static DEFAULT_TIME_INTERVAL = 5000;
+    static TIMER_INTERVAL = 5000;
 
     private _timerId!: NodeJS.Timeout;
     private _isTracking: boolean = false;
-    private _trackingData: TrackerLogData = {};
-    private _logger: AppDataLogger;
+    private _trackingData: AppsUsageLogs = {};
+    private _logger: AppsUsageLogger;
 
-    constructor(logger: AppDataLogger) {
+    constructor(logger: AppsUsageLogger) {
         this._logger = logger;
     }
 
@@ -41,7 +36,7 @@ export default class AppTracker {
         this.timerId = setTimeout(() => {
             this._startTracking();
             this.saveActiveWindowData();
-        }, AppTracker.DEFAULT_TIME_INTERVAL);
+        }, AppTracker.TIMER_INTERVAL);
     }
 
     private async saveActiveWindowData() {
@@ -49,24 +44,29 @@ export default class AppTracker {
         if (data) {
             const appName = data.owner.name;
             const windowTitle = data.title;
+
             if (!this._trackingData[appName]) {
                 this._trackingData[appName] = {};
             }
-            if (!this._trackingData[appName][windowTitle]) {
-                this._trackingData[appName][windowTitle] = 0;
-            }
-            this._trackingData[appName][windowTitle]++;
 
-            this._logger.save({
-                appName,
-                windowTitle,
-                timeSpent: this._trackingData[appName][windowTitle] * AppTracker.DEFAULT_TIME_INTERVAL,
-                id: data.owner.path
-            });
+            if (!this._trackingData[appName][windowTitle]) {
+                this._trackingData[appName][windowTitle] = {
+                    timeSpent: 0
+                }
+            }
+
+            this._trackingData[appName][windowTitle].timeSpent += AppTracker.TIMER_INTERVAL;
+
+            this._logger.saveAppUsageLogs(this._trackingData);
         }
     }
 
-    getLogData() {
+
+    getAppsUsageLogs() {
+        return this._logger.getAppUsageLogs();
+    }
+
+    getCurrentUsageData() {
         return this._trackingData;
     }
 
