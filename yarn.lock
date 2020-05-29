@@ -1181,6 +1181,11 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
+desktop-idle@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/desktop-idle/-/desktop-idle-1.3.0.tgz#7198b3f1bf147baac2217924bf647600c88d18be"
+  integrity sha512-NtT20NvpA1uMMQYvhNjKffdCRFbKWdiBZCRwB12IchtwPJMNg2UbF663PthyiVYq8xFUue7bpJzdhdu66cDK9w==
+
 detect-newline@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-3.1.0.tgz#576f5dfc63ae1a192ff192d8ad3af6308991b651"
