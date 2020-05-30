@@ -1,4 +1,6 @@
 import activeWin from "active-win";
+// @ts-ignore
+import desktopIdle from "desktop-idle";
 
 type Milliseconds = number;
 
@@ -6,6 +8,7 @@ export interface AppsUsageLogs {
     [key: string]: {
         [key: string]: {
             timeSpent: Milliseconds,
+            idleTime: Milliseconds,
         }
     }
 }
@@ -58,11 +61,13 @@ export default class AppTracker {
 
             if (!this._trackingData[appName][windowTitle]) {
                 this._trackingData[appName][windowTitle] = {
-                    timeSpent: 0
+                    timeSpent: 0,
+                    idleTime: desktopIdle.getIdleTime()
                 }
             }
 
             this._trackingData[appName][windowTitle].timeSpent += AppTracker.TIMER_INTERVAL;
+            this._trackingData[appName][windowTitle].idleTime += desktopIdle.getIdleTime();
 
             this._logger.saveAppUsageLogs(this._trackingData);
         }

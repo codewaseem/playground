@@ -106,7 +106,8 @@ describe("AppTracker", () => {
         expect(save).toHaveBeenCalledWith({
             'Google Chrome': {
                 'Unicorns - Google Search': {
-                    timeSpent: AppTracker.TIMER_INTERVAL
+                    timeSpent: AppTracker.TIMER_INTERVAL,
+                    idleTime: expect.any(Number)
                 }
             }
         } as AppsUsageLogs);

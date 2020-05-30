@@ -63,23 +63,32 @@ export const LogInputData = [appOneTabOne, appOneTabTwo, appOneTabTwo, appOneTab
 export const LogOutputData: AppsUsageLogs = {
     [APP_ONE as string]: {
         [appOneTabOne.title]: {
-            timeSpent: AppTracker.TIMER_INTERVAL
+            timeSpent: AppTracker.TIMER_INTERVAL,
+            idleTime: expect.any(Number),
         },
         [appOneTabTwo.title]: {
-            timeSpent: 3 * AppTracker.TIMER_INTERVAL
+            timeSpent: 3 * AppTracker.TIMER_INTERVAL,
+            idleTime: expect.any(Number),
+
         },
         [appOneTabThree.title]: {
-            timeSpent: AppTracker.TIMER_INTERVAL
+            timeSpent: AppTracker.TIMER_INTERVAL,
+            idleTime: expect.any(Number),
+
         }
     },
     [APP_TWO as string]: {
         [appOneTabOne.title]: {
-            timeSpent: AppTracker.TIMER_INTERVAL
+            timeSpent: AppTracker.TIMER_INTERVAL,
+            idleTime: expect.any(Number),
+
         }
     },
     [APP_THREE as string]: {
         [appOneTabOne.title]: {
-            timeSpent: AppTracker.TIMER_INTERVAL
+            timeSpent: AppTracker.TIMER_INTERVAL,
+            idleTime: expect.any(Number),
+
         }
     }
 }
