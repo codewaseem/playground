@@ -9,6 +9,8 @@ export interface AppsUsageLogs {
         [key: string]: {
             timeSpent: Milliseconds,
             idleTime: Milliseconds,
+            keystrokes: number,
+            mouseclicks: number
         }
     }
 }

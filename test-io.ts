@@ -8,14 +8,21 @@ class IoHookManager {
     private subscribers: Function[] = [];
 
     start() {
+
         iohook.start();
 
         iohook.on("keyup", this._incrementKeystrokes);
-
         iohook.on("mouseup", this._incrementMouseClicks);
-
         iohook.on("mousewheel", this._incrementMouseClicks);
+    }
 
+    stop() {
+
+        iohook.off("keyup", this._incrementKeystrokes);
+        iohook.off("mouseup", this._incrementMouseClicks);
+        iohook.off("mousewheel", this._incrementMouseClicks);
+
+        iohook.stop();
     }
 
     private _incrementMouseClicks = () => {

@@ -107,7 +107,9 @@ describe("AppTracker", () => {
             'Google Chrome': {
                 'Unicorns - Google Search': {
                     timeSpent: AppTracker.TIMER_INTERVAL,
-                    idleTime: expect.any(Number)
+                    idleTime: expect.any(Number),
+                    keystrokes: expect.any(Number),
+                    mouseclicks: expect.any(Number)
                 }
             }
         } as AppsUsageLogs);
