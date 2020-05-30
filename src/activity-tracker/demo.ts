@@ -3,6 +3,7 @@ import AppDataStore from "./AppDataStore";
 
 (async () => {
     const tracker = new AppTracker(new AppDataStore());
+    await tracker.init();
     tracker.start();
 
     setInterval(async () => {

@@ -1,7 +1,7 @@
 import activeWin from "active-win";
 import AppTracker, { AppsUsageLogger, AppsUsageLogs } from "../AppTracker";
 import { delay } from "../../utils";
-import { LogInputData, LogOutputData, TestIntervalTime } from "../__testdata__/test.data";
+import { LogInputData, LogOutputData, TestIntervalTime, initialAppUsageData } from "../__testdata__/test.data";
 
 AppTracker.TIMER_INTERVAL = TestIntervalTime;
 
@@ -16,7 +16,7 @@ describe("AppTracker", () => {
     const save = jest.fn((data: AppsUsageLogs) => testLogs = data) as any;
     const getLogs = jest.fn(() => Promise.resolve(testLogs)) as any;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         testLogs = {};
         logger = {
             saveAppUsageLogs: save,
@@ -24,6 +24,7 @@ describe("AppTracker", () => {
         }
 
         tracker = new AppTracker(logger);
+        await tracker.init();
         jest.useFakeTimers();
 
     });
@@ -130,5 +131,36 @@ describe("AppTracker", () => {
         });
 
         tracker.stop();
+    });
+
+    it("should be able to resume from an initial data", async () => {
+        const initialData = ({
+            [initialAppUsageData.owner.name]: {
+                [initialAppUsageData.title]: {
+                    timeSpent: AppTracker.TIMER_INTERVAL * 2
+                }
+            }
+        } as AppsUsageLogs);
+
+        logger.getAppUsageLogs = jest.fn(() => Promise.resolve(initialData))
+
+        const tracker2 = new AppTracker(logger);
+        await tracker2.init();
+
+        jest.useRealTimers();
+
+        tracker2.start();
+        await delay(AppTracker.TIMER_INTERVAL);
+
+
+        expect(await tracker2.getCurrentUsageData()).toMatchObject({
+            [initialAppUsageData.owner.name]: {
+                [initialAppUsageData.title]: {
+                    timeSpent: AppTracker.TIMER_INTERVAL * 3
+                }
+            }
+        });
+
+        tracker2.stop();
     });
 });

@@ -9,6 +9,7 @@ export const TestIntervalTime = 10;
 
 AppTracker.TIMER_INTERVAL = TestIntervalTime;
 
+
 const appOneTabOne: activeWin.WindowsResult = {
     platform: "windows",
     title: 'Unicorns - Google Search',
@@ -52,6 +53,8 @@ const appThreeTabOne: activeWin.WindowsResult = {
         name: APP_THREE
     }
 }
+
+export const initialAppUsageData = appOneTabOne;
 
 
 export const LogInputData = [appOneTabOne, appOneTabTwo, appOneTabTwo, appOneTabTwo,

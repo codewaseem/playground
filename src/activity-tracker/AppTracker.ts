@@ -23,9 +23,16 @@ export default class AppTracker {
     private _isTracking: boolean = false;
     private _trackingData: AppsUsageLogs = {};
     private _logger: AppsUsageLogger;
+    private _isInitialized: boolean = false;
+
 
     constructor(logger: AppsUsageLogger) {
         this._logger = logger;
+    }
+
+    async init() {
+        this._trackingData = await this._logger.getAppUsageLogs();
+        this._isInitialized = true;
     }
 
     private set timerId(id: NodeJS.Timeout) {
@@ -33,7 +40,7 @@ export default class AppTracker {
     }
 
     private _startTracking() {
-        this.timerId = setTimeout(() => {
+        this.timerId = setTimeout(async () => {
             this._startTracking();
             this.saveActiveWindowData();
         }, AppTracker.TIMER_INTERVAL);
@@ -70,11 +77,15 @@ export default class AppTracker {
         return this._trackingData;
     }
 
-    start() {
+    async start() {
         if (this._isTracking) return;
 
-        this._isTracking = true;
-        this._startTracking();
+        if (this._isInitialized) {
+            this._isTracking = true;
+            this._startTracking();
+        } else {
+            throw new Error('You need to first call init() and await for it to complete');
+        }
     }
 
     stop() {
