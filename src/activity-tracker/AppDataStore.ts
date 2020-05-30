@@ -17,18 +17,27 @@ export default class AppDataStore implements AppsUsageLogger {
             ...logs,
             ...data
         }
+        const dateKey = (new Date()).toLocaleDateString();
 
-        await db.put(APP_USAGE_DATA_KEY, JSON.stringify(logs));
+        await db.put(APP_USAGE_DATA_KEY, JSON.stringify({
+            [dateKey]: logs
+        }));
         return data;
     }
 
     async getAppUsageLogs(): Promise<AppsUsageLogs> {
-        let value = '{}';
+        const dateKey = (new Date()).toLocaleDateString();
+        let value: {
+            [key: string]: AppsUsageLogs
+        } = `{
+            "${dateKey}": {}
+        }` as any;
         try {
             value = await db.get(APP_USAGE_DATA_KEY);
         } catch (e) {
             console.log('Key not found! Creating new one');
         }
-        return JSON.parse(value);
+        console.log(value);
+        return JSON.parse(value as any)[dateKey];
     }
 }
