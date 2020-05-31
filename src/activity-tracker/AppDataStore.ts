@@ -2,12 +2,16 @@ import { AppsUsageLogger, AppsUsageLogs } from "./AppTracker";
 // @ts-ignore
 import level from "level";
 
-const DB_NAME = "TRACKER_DB";
 const APP_USAGE_DATA_KEY = "AppUsageLogs";
 
-const db = level(DB_NAME);
-
 export default class AppDataStore implements AppsUsageLogger {
+    private db: any;
+
+
+    constructor(dbPathName = '__appdata__') {
+        this.db = level(dbPathName);
+    }
+
 
     async saveAppUsageLogs(data: AppsUsageLogs): Promise<AppsUsageLogs> {
         let logs: AppsUsageLogs = await this.getAppUsageLogs();
@@ -19,7 +23,7 @@ export default class AppDataStore implements AppsUsageLogger {
         }
         const dateKey = (new Date()).toLocaleDateString();
 
-        await db.put(APP_USAGE_DATA_KEY, JSON.stringify({
+        await this.db.put(APP_USAGE_DATA_KEY, JSON.stringify({
             [dateKey]: logs
         }));
         return data;
@@ -33,7 +37,7 @@ export default class AppDataStore implements AppsUsageLogger {
             "${dateKey}": {}
         }` as any;
         try {
-            value = await db.get(APP_USAGE_DATA_KEY);
+            value = await this.db.get(APP_USAGE_DATA_KEY);
         } catch (e) {
             console.log('Key not found! Creating new one');
         }
