@@ -24,7 +24,7 @@ function trackIdleTime() {
         console.log(`${''.padStart(80, '=')}`);
         console.log(`prevIdleTime: ${prevIdleTime}`);
         console.log(`currentIdleTime: ${currentIdleTime}`);
-        console.log(`totalIdleTime: ${totalIdleTime}`);
+        console.log(`totalIdleTime: ${totalIdleTime + currentIdleTime}`);
         console.log(`totalTime: ${totalTime / 1000}`);
         console.log(`${''.padStart(80, '=')}`);
 
