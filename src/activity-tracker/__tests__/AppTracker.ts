@@ -6,6 +6,8 @@ import { LogInputData, LogOutputData, TestIntervalTime, initialAppUsageData } fr
 AppTracker.TIMER_INTERVAL = TestIntervalTime;
 
 
+jest.mock("iohook");
+
 describe("AppTracker", () => {
 
     let tracker: AppTracker;
@@ -43,6 +45,8 @@ describe("AppTracker", () => {
         expect(timerIdSet).toHaveBeenCalled();
         expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), AppTracker.TIMER_INTERVAL);
 
+        tracker.stop();
+
     });
 
     it("should not call setTimeout again if the tracker is already started", async () => {
@@ -52,6 +56,7 @@ describe("AppTracker", () => {
 
         expect(setTimeout).toHaveBeenCalledTimes(1);
 
+        tracker.stop();
 
     });
 
@@ -67,6 +72,8 @@ describe("AppTracker", () => {
 
         expect(setTimeout).toHaveBeenCalledTimes(2);
         expect(activeWin).toHaveBeenCalledTimes(1);
+
+        tracker.stop();
 
     });
 
@@ -162,7 +169,7 @@ describe("AppTracker", () => {
                     timeSpent: AppTracker.TIMER_INTERVAL * 3
                 }
             }
-        });
+        } as AppsUsageLogs);
 
         tracker2.stop();
     });

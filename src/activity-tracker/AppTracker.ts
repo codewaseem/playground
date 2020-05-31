@@ -1,6 +1,7 @@
 import activeWin from "active-win";
 // @ts-ignore
 import desktopIdle from "desktop-idle";
+import ioHookManager from "./IoHookManager";
 
 type Milliseconds = number;
 
@@ -64,7 +65,8 @@ export default class AppTracker {
             if (!this._trackingData[appName][windowTitle]) {
                 this._trackingData[appName][windowTitle] = {
                     timeSpent: 0,
-                    idleTime: desktopIdle.getIdleTime()
+                    idleTime: desktopIdle.getIdleTime(),
+                    ...ioHookManager.getData()
                 }
             }
 
@@ -90,6 +92,7 @@ export default class AppTracker {
         if (this._isInitialized) {
             this._isTracking = true;
             this._startTracking();
+            ioHookManager.start();
         } else {
             throw new Error('You need to first call init() and await for it to complete');
         }
@@ -97,6 +100,9 @@ export default class AppTracker {
 
     stop() {
         if (!this._isTracking) return;
+        this._isTracking = false;
         clearTimeout(this._timerId);
+        ioHookManager.stop();
+
     }
 }
