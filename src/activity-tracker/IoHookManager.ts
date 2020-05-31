@@ -16,6 +16,11 @@ class IoHookManager {
         iohook.on("mousewheel", this._incrementMouseClicks);
     }
 
+    resetData() {
+        this._mouseclicks = 0;
+        this._keystrokes = 0;
+    }
+
     stop() {
 
         iohook.off("keyup", this._incrementKeystrokes);
@@ -23,7 +28,6 @@ class IoHookManager {
         iohook.off("mousewheel", this._incrementMouseClicks);
 
         iohook.stop();
-        iohook.unload();
     }
 
     private _incrementMouseClicks = () => {

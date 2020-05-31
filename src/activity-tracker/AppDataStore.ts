@@ -38,6 +38,7 @@ export default class AppDataStore implements AppsUsageLogger {
             console.log('Key not found! Creating new one');
         }
         console.log(value);
-        return JSON.parse(value as any)[dateKey];
+        const data = JSON.parse(value as any)[dateKey];
+        return data || {};
     }
 }

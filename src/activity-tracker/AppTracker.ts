@@ -65,13 +65,20 @@ export default class AppTracker {
             if (!this._trackingData[appName][windowTitle]) {
                 this._trackingData[appName][windowTitle] = {
                     timeSpent: 0,
-                    idleTime: desktopIdle.getIdleTime(),
-                    ...ioHookManager.getData()
+                    idleTime: 0,
+                    mouseclicks: 0,
+                    keystrokes: 0,
                 }
             }
 
+            const { mouseclicks, keystrokes } = ioHookManager.getData();
+
             this._trackingData[appName][windowTitle].timeSpent += AppTracker.TIMER_INTERVAL;
             this._trackingData[appName][windowTitle].idleTime += desktopIdle.getIdleTime();
+            this._trackingData[appName][windowTitle].mouseclicks += mouseclicks;
+            this._trackingData[appName][windowTitle].keystrokes += keystrokes;
+
+            ioHookManager.resetData();
 
             this._logger.saveAppUsageLogs(this._trackingData);
         }
