@@ -1,38 +1,50 @@
 // @ts-ignore
 import desktopIdle from "desktop-idle";
 
-let prevIdleTime = desktopIdle.getIdleTime();
-let currentIdleTime = prevIdleTime;
-let totalIdleTime = currentIdleTime;
-let totalTime = 0;
+class IdleTimeTracker {
 
-const isNewIdleTime = () => prevIdleTime > currentIdleTime;
+    private _prevIdleTime = 0;
+    private _currentIdleTime = 0;
+    private _totalIdleTime = 0;
 
-function trackIdleTime() {
-    setTimeout(() => {
-        currentIdleTime = desktopIdle.getIdleTime();
+    constructor() {
+        this._currentIdleTime = desktopIdle.getIdleTime();
 
-        if (isNewIdleTime()) {
-            totalIdleTime += prevIdleTime;
-            prevIdleTime = 0;
-        }
-        else {
-            prevIdleTime = currentIdleTime;
-        }
+        const startTimer = () => setTimeout(() => {
+            this._currentIdleTime = desktopIdle.getIdleTime();
 
-        totalTime += 10 * 1000;
-        console.log(`${''.padStart(80, '=')}`);
-        console.log(`prevIdleTime: ${prevIdleTime}`);
-        console.log(`currentIdleTime: ${currentIdleTime}`);
-        console.log(`totalIdleTime: ${totalIdleTime + currentIdleTime}`);
-        console.log(`totalTime: ${totalTime / 1000}`);
-        console.log(`${''.padStart(80, '=')}`);
+            if (this._isNewIdleState()) {
+                this._totalIdleTime += this._prevIdleTime;
+                this._prevIdleTime = 0;
+            } else {
+                this._prevIdleTime = this._currentIdleTime;
+            }
+
+            startTimer();
+
+        }, 10000);
+
+        startTimer();
+    }
+
+    getTotalIdleTime() {
+        return this._totalIdleTime + this._currentIdleTime;
+    }
+
+    private _isNewIdleState() {
+        return this._prevIdleTime > this._currentIdleTime;
+    }
 
 
-
-        trackIdleTime();
-
-    }, 10 * 1000);
 }
 
-trackIdleTime();
+
+const idleTimeTracker = new IdleTimeTracker();
+
+
+let totalTime = 0;
+setInterval(() => {
+    totalTime += 5000;
+    console.log(`totalIdleTime: ${idleTimeTracker.getTotalIdleTime()}`);
+    console.log(`totalTime:${totalTime}`);
+}, 5000);
