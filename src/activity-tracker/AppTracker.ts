@@ -1,7 +1,7 @@
 import activeWin from "active-win";
 // @ts-ignore
-import desktopIdle from "desktop-idle";
 import ioHookManager from "./IoHookManager";
+import IdleTimeTracker from "./IdleTimeTracker";
 
 type Milliseconds = number;
 
@@ -30,6 +30,8 @@ export default class AppTracker {
     private _trackingData: AppsUsageLogs = {};
     private _logger: AppsUsageLogger;
     private _isInitialized: boolean = false;
+    private _lastActiveWindow: string = '';
+    private _idleTimeTracker: IdleTimeTracker = new IdleTimeTracker();
 
 
     constructor(logger: AppsUsageLogger) {
@@ -57,6 +59,13 @@ export default class AppTracker {
         if (data) {
             const appName = data.owner.name;
             const windowTitle = data.title;
+            const activeWindowId = `${appName}-${windowTitle}`;
+
+
+            if (this._lastActiveWindow != activeWindowId) {
+                this._lastActiveWindow = activeWindowId;
+                this._idleTimeTracker = new IdleTimeTracker();
+            }
 
             if (!this._trackingData[appName]) {
                 this._trackingData[appName] = {};
@@ -73,8 +82,8 @@ export default class AppTracker {
 
             const { mouseclicks, keystrokes } = ioHookManager.getData();
 
-            this._trackingData[appName][windowTitle].timeSpent += AppTracker.TIMER_INTERVAL;
-            this._trackingData[appName][windowTitle].idleTime += desktopIdle.getIdleTime();
+            this._trackingData[appName][windowTitle].timeSpent += AppTracker.TIMER_INTERVAL / 1000;
+            this._trackingData[appName][windowTitle].idleTime = this._idleTimeTracker.getTotalIdleTime();
             this._trackingData[appName][windowTitle].mouseclicks += mouseclicks;
             this._trackingData[appName][windowTitle].keystrokes += keystrokes;
 
